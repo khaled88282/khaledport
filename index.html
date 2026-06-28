@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Khaled Miah — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Inter:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --dark: #080A0F;
+    --dark-2: #0D1117;
+    --dark-3: #131920;
+    --slate: #1E2533;
+    --text: #E8E4DC;
+    --text-muted: #7A8494;
+    --accent: #2A4A7F;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── CANVAS BG ── */
+  #bg-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 60px;
+    background: linear-gradient(to bottom, rgba(8,10,15,0.95), transparent);
+    backdrop-filter: blur(4px);
+  }
+
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--gold);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .nav-links a:hover { color: var(--gold); }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 0 60px;
+    overflow: hidden;
+  }
+
+  .hero-content {
+    flex: 1;
+    max-width: 600px;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(56px, 8vw, 100px);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -2px;
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero-name span {
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(18px, 2.5vw, 26px);
+    font-weight: 300;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-desc {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--text-muted);
+    max-width: 420px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    opacity: 0;
+    animation: fadeUp 0.8s 1s forwards;
+  }
+
+  .btn-primary {
+    padding: 14px 32px;
+    background: var(--gold);
+    color: var(--dark);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .btn-primary:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+  }
+
+  .btn-outline {
+    padding: 14px 32px;
+    border: 1px solid rgba(201,168,76,0.4);
+    color: var(--gold);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .btn-outline:hover {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.08);
+    transform: translateY(-2px);
+  }
+
+  /* ── PHOTO FRAME ── */
+  .hero-photo {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 45%;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeIn 1.2s 0.5s forwards;
+  }
+
+  .hero-photo::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, var(--dark) 0%, transparent 40%);
+    z-index: 2;
+  }
+
+  .hero-photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, var(--dark) 0%, transparent 30%);
+    z-index: 2;
+  }
+
+  .hero-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    filter: grayscale(20%) contrast(1.05);
+  }
+
+  .photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(42,74,127,0.15) 0%, transparent 60%);
+    z-index: 3;
+    mix-blend-mode: color;
+  }
+
+  /* Cinematic lines */
+  .cinematic-line {
+    position: absolute;
+    background: var(--gold);
+    opacity: 0.6;
+    z-index: 10;
+  }
+
+  .line-top { top: 60px; left: 60px; right: 0; height: 1px; animation: lineGrow 1s 1.5s both; }
+  .line-bottom { bottom: 60px; left: 60px; right: 0; height: 1px; animation: lineGrow 1s 1.7s both; }
+
+  /* ── SCROLL INDICATOR ── */
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 60px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeIn 1s 2s forwards;
+  }
+
+  .scroll-line {
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    animation: scrollPulse 2s infinite;
+  }
+
+  .scroll-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 120px 60px;
+  }
+
+  .section-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 60px;
+  }
+
+  /* ── ABOUT ── */
+  #about {
+    background: var(--dark-2);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .about-text p {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  .about-text p strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .stat-box {
+    background: var(--dark-3);
+    padding: 32px;
+    border-left: 2px solid transparent;
+    transition: border-color 0.3s;
+  }
+
+  .stat-box:hover { border-color: var(--gold); }
+
+  .stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+  }
+
+  /* ── EXPERIENCE ── */
+  #experience { background: var(--dark); }
+
+  .exp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .exp-item {
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    gap: 40px;
+    align-items: start;
+    padding: 40px;
+    background: var(--dark-3);
+    border-left: 2px solid transparent;
+    transition: all 0.3s;
+    cursor: default;
+  }
+
+  .exp-item:hover {
+    border-color: var(--gold);
+    background: var(--slate);
+  }
+
+  .exp-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    padding-top: 4px;
+  }
+
+  .exp-role {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .exp-company {
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .exp-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+
+  .exp-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 6px 12px;
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold);
+    white-space: nowrap;
+    align-self: start;
+  }
+
+  /* ── SKILLS ── */
+  #skills { background: var(--dark-2); }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .skill-card {
+    background: var(--dark-3);
+    padding: 40px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 0; height: 2px;
+    background: var(--gold);
+    transition: width 0.4s;
+  }
+
+  .skill-card:hover::before { width: 100%; }
+
+  .skill-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+
+  .skill-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    background: rgba(201,168,76,0.08);
+    color: var(--gold);
+    border: 1px solid rgba(201,168,76,0.2);
+  }
+
+  /* ── CONTACT ── */
+  #contact {
+    background: var(--dark);
+    text-align: center;
+  }
+
+  .contact-inner {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .contact-email {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(24px, 4vw, 42px);
+    font-weight: 300;
+    color: var(--gold);
+    text-decoration: none;
+    display: block;
+    margin: 40px 0;
+    transition: color 0.3s;
+  }
+
+  .contact-email:hover { color: var(--gold-light); }
+
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 40px;
+  }
+
+  .social-link {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .social-link:hover { color: var(--gold); }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    padding: 32px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--dark);
+  }
+
+  footer p {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+  }
+
+  /* ── DIVIDER ── */
+  .gold-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    margin-bottom: 60px;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes lineGrow {
+    from { transform: scaleX(0); transform-origin: left; }
+    to { transform: scaleX(1); transform-origin: left; }
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  /* Reveal on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 768px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    #hero { padding: 0 24px; flex-direction: column; justify-content: center; }
+    .hero-photo { width: 100%; height: 50vh; position: relative; margin-bottom: 40px; }
+    .hero-content { max-width: 100%; }
+    section { padding: 80px 24px; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .exp-item { grid-template-columns: 1fr; gap: 12px; }
+    .exp-tag { display: none; }
+    footer { flex-direction: column; gap: 12px; text-align: center; padding: 24px; }
+    .line-top, .line-bottom { left: 24px; }
+    .scroll-hint { left: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Animated background canvas -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- Cinematic lines -->
+<div class="cinematic-line line-top"></div>
+<div class="cinematic-line line-bottom"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">KM</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-content">
+    <p class="hero-eyebrow">Based in Dubai, UAE</p>
+    <h1 class="hero-name">Khaled<br><span>Miah</span></h1>
+    <p class="hero-title">Finance · Politics · Technology</p>
+    <p class="hero-desc">
+      Political Science student. Finance & Operations professional managing a multi-million AED retail operation. AI & web developer building real products from scratch.
+    </p>
+    <div class="hero-cta">
+      <a href="#experience" class="btn-primary">View Work</a>
+      <a href="#contact" class="btn-outline">Connect</a>
+    </div>
+  </div>
+
+  <div class="hero-photo">
+    <img src="22222.png" alt="Khaled Miah" onerror="this.parentElement.style.background='linear-gradient(135deg, #1E2533 0%, #0D1117 100%)'">
+    <div class="photo-overlay"></div>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="reveal">
+    <p class="section-eyebrow">Who I Am</p>
+    <h2 class="section-title">Multi-disciplinary<br>professional</h2>
+    <div class="gold-divider"></div>
+  </div>
+
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>
+        I'm a <strong>Political Science Honours student</strong> at Leading University, Sylhet — currently based in Dubai where I operate at the intersection of finance, technology, and analytical thinking.
+      </p>
+      <p>
+        At <strong>Abdun Nur Grocery LLC</strong>, I manage the complete financial operations — daily accounts, staff payroll, inventory, and supplier coordination on a business turning over ~30,000 AED monthly.
+      </p>
+      <p>
+        In parallel, I independently built <strong>PixelMind AI</strong> — a live AI image generation platform on Cloudflare Workers — and produce research-driven political commentary on South Asian governance in Bengali.
+      </p>
+      <p>
+        Three different worlds. One mindset: <strong>build, analyze, execute.</strong>
+      </p>
+    </div>
+
+    <div class="stats-grid reveal">
+      <div class="stat-box">
+        <div class="stat-number">30K</div>
+        <div class="stat-label">AED Monthly Revenue Managed</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">3+</div>
+        <div class="stat-label">Live Projects Built</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">8+</div>
+        <div class="stat-label">Months Operations Experience</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">UAE</div>
+        <div class="stat-label">Dubai Based, Global Mindset</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="reveal">
+    <p class="section-eyebrow">Career</p>
+    <h2 class="section-title">Experience &<br>Projects</h2>
+    <div class="gold-divider"></div>
+  </div>
+
+  <div class="exp-list">
+    <div class="exp-item reveal">
+      <div class="exp-date">Nov 2025 — Present</div>
+      <div>
+        <div class="exp-role">Finance & Operations Associate</div>
+        <div class="exp-company">Abdun Nur Grocery LLC · Dubai, UAE</div>
+        <div class="exp-desc">
+          Managing complete financial operations for a retail business — daily accounts, cash flow tracking, staff payroll, inventory coordination, and supplier relations. Built a custom digital invoice & management system with WhatsApp integration to automate record-keeping. Report directly on financial health and monthly performance.
+        </div>
+      </div>
+      <div class="exp-tag">Full-time</div>
+    </div>
+
+    <div class="exp-item reveal">
+      <div class="exp-date">2025 — Present</div>
+      <div>
+        <div class="exp-role">Founder & Developer</div>
+        <div class="exp-company">PixelMind AI · Remote</div>
+        <div class="exp-desc">
+          Built and launched pixelmindai.online — an AI image generation platform on Cloudflare Workers/Pages. Integrated multiple AI APIs, added chatbot features, handled DNS, SEO, and Google AdSense monetization setup independently.
+        </div>
+      </div>
+      <div class="exp-tag">Project</div>
+    </div>
+
+    <div class="exp-item reveal">
+      <div class="exp-date">2024 — Present</div>
+      <div>
+        <div class="exp-role">Political Analyst & Content Creator</div>
+        <div class="exp-company">Independent · Bangladesh / UAE</div>
+        <div class="exp-desc">
+          Producing Bengali-language political fact-checks, policy analysis, and commentary on Bangladeshi governance and South Asian affairs. Research-driven content covering parliamentary proceedings, economic policy, and comparative governance.
+        </div>
+      </div>
+      <div class="exp-tag">Independent</div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="reveal">
+    <p class="section-eyebrow">Capabilities</p>
+    <h2 class="section-title">Skills &<br>Expertise</h2>
+    <div class="gold-divider"></div>
+  </div>
+
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <div class="skill-icon">📊</div>
+      <div class="skill-title">Finance & Operations</div>
+      <div class="skill-tags">
+        <span class="tag">Accounting</span>
+        <span class="tag">Payroll</span>
+        <span class="tag">Cash Flow</span>
+        <span class="tag">Inventory</span>
+        <span class="tag">Financial Reporting</span>
+      </div>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-icon">💻</div>
+      <div class="skill-title">Web & AI Development</div>
+      <div class="skill-tags">
+        <span class="tag">Cloudflare Workers</span>
+        <span class="tag">HTML/CSS/JS</span>
+        <span class="tag">AI APIs</span>
+        <span class="tag">Next.js</span>
+        <span class="tag">Python</span>
+      </div>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-icon">🏛️</div>
+      <div class="skill-title">Political Analysis</div>
+      <div class="skill-tags">
+        <span class="tag">Policy Analysis</span>
+        <span class="tag">Fact-Checking</span>
+        <span class="tag">Comparative Governance</span>
+        <span class="tag">Bengali Content</span>
+      </div>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-icon">🎨</div>
+      <div class="skill-title">Design & Media</div>
+      <div class="skill-tags">
+        <span class="tag">Photography</span>
+        <span class="tag">Digital Design</span>
+        <span class="tag">Content Strategy</span>
+        <span class="tag">Social Media</span>
+      </div>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-icon">🌐</div>
+      <div class="skill-title">Languages</div>
+      <div class="skill-tags">
+        <span class="tag">Bengali (Native)</span>
+        <span class="tag">English (Fluent)</span>
+        <span class="tag">Arabic (Basic)</span>
+      </div>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-icon">🛠️</div>
+      <div class="skill-title">Tools & Platforms</div>
+      <div class="skill-tags">
+        <span class="tag">Google Workspace</span>
+        <span class="tag">Telegram Bots</span>
+        <span class="tag">Firebase</span>
+        <span class="tag">Vercel</span>
+        <span class="tag">Figma</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner reveal">
+    <p class="section-eyebrow">Get In Touch</p>
+    <h2 class="section-title">Let's work<br>together</h2>
+    <div class="gold-divider" style="margin: 0 auto 40px;"></div>
+    <p style="color: var(--text-muted); font-size: 14px; line-height: 1.8;">
+      Open to opportunities in finance, operations, political consulting, and technology. Based in Dubai — available for remote collaboration globally.
+    </p>
+    <a href="https://linkedin.com/in/khaled-miah-240b91419" class="contact-email">LinkedIn Profile →</a>
+    <div class="social-links">
+      <a href="https://pixelmindai.online" class="social-link">PixelMind AI</a>
+      <a href="https://linkedin.com/in/khaled-miah-240b91419" class="social-link">LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 Khaled Miah — Dubai, UAE</p>
+  <p>Finance · Politics · Technology</p>
+</footer>
+
+<script>
+// ── PARTICLE BACKGROUND ──
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+const particles = [];
+for (let i = 0; i < 60; i++) {
+  particles.push({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    size: Math.random() * 1.5 + 0.3,
+    speedX: (Math.random() - 0.5) * 0.3,
+    speedY: (Math.random() - 0.5) * 0.3,
+    opacity: Math.random() * 0.4 + 0.1,
+  });
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw connections
+  particles.forEach((p, i) => {
+    particles.slice(i + 1).forEach(q => {
+      const dist = Math.hypot(p.x - q.x, p.y - q.y);
+      if (dist < 120) {
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(q.x, q.y);
+        ctx.strokeStyle = `rgba(201,168,76,${0.06 * (1 - dist/120)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    });
+  });
+
+  // Draw dots
+  particles.forEach(p => {
+    p.x += p.speedX;
+    p.y += p.speedY;
+    if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(201,168,76,${p.opacity})`;
+    ctx.fill();
+  });
+
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// ── SCROLL REVEAL ──
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1 });
+
+reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+  </html>
